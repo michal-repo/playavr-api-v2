@@ -1,0 +1,7 @@
+{
+    "require": {
+        "guzzlehttp/guzzle": "^7.0",
+        "bramus/router": "^1.6",
+        "firebase/php-jwt": "^6.10"
+    }
+}
