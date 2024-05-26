@@ -33,7 +33,7 @@ class VRP
     private function _checkAuth($skip_auth_throw = false)
     {
         try {
-            if (is_null($this->extracted_auth_header)){
+            if (is_null($this->extracted_auth_header)) {
                 throw new \Exception("Token not provided");
             }
             $decoded = JWT::decode($this->extracted_auth_header, new Key($this->config->secret_key, 'HS256'));
@@ -44,7 +44,7 @@ class VRP
                 throw new \Exception("Unable to get username from token");
             }
         } catch (\Exception $e) {
-            if (!$skip_auth_throw){
+            if (!$skip_auth_throw) {
                 echo json_encode(['status' => ['code' => 401, 'message' => 'Unauthorized']]);
                 die();
             }
@@ -87,6 +87,41 @@ class VRP
         });
     }
 
+    private function _getProjection($screen_type)
+    {
+        switch ($screen_type) {
+            case '360':
+            case 'sphere360':
+                return "360";
+            case 'fisheye':
+                return "FSH";
+            case 'screen':
+                return "FLAT";
+            default:
+            case 'sphere180':
+            case 'tb':
+            case 'sbs':
+                return "180";
+        }
+    }
+
+    private function _getStereo($screen_type)
+    {
+        switch ($screen_type) {
+            case '360':
+            case 'tb':
+                return "TB";
+            case 'sphere180':
+            case 'sphere360':
+            case 'screen':
+                return "MONO";
+            default:
+            case 'fisheye':
+            case 'sbs':
+                return "LR";
+        }
+    }
+
     private function _getVideos($title = null, $include_groups = null, $exclude_groups = null, $full = false)
     {
         $out = $this->files_loop(function ($group) use ($title, $full, $exclude_groups, $include_groups) {
@@ -113,8 +148,8 @@ class VRP
                                             "is_download" => false,
                                             "url" => current(explode('/', $_SERVER['SERVER_PROTOCOL'])) . "://" . $_SERVER['SERVER_ADDR'] . "/" . $video['src'],
                                             "unavailable_reason" => null,
-                                            "projection" => "180",
-                                            "stereo" => "LR",
+                                            "projection" => $this->_getProjection($video['screen_type']),
+                                            "stereo" => $this->_getStereo($video['screen_type']),
                                             "quality_name" => "Good",
                                             "quality_order" => 80
                                         ]
@@ -240,7 +275,7 @@ class VRP
     public function refreshToken($token)
     {
         try {
-            if (is_null($token)){
+            if (is_null($token)) {
                 throw new \Exception("Token not provided");
             }
             $decoded = JWT::decode($token, new Key($this->config->secret_key, 'HS256'));
