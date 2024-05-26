@@ -26,6 +26,6 @@ Add following section to your apache site config to enable `.htaccess`.
 
 Use [following scripts](https://github.com/michal-repo/web_vr_video_player/tree/main/scripts) to generate json file.
 
-To create your own scripts follow instructions for in [this repo](https://github.com/michal-repo/web_vr_video_player/blob/main/README.md#generating-your-own-json-file-with-video-sources).
+To create your own scripts follow instructions in [this repo](https://github.com/michal-repo/web_vr_video_player/blob/main/README.md#generating-your-own-json-file-with-video-sources).
 
 **Alternatively modify `api.php` to process your own video files source.**
