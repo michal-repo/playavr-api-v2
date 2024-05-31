@@ -133,7 +133,7 @@ class VRP
                             continue;
                         }
                         $v = [
-                            "id" => md5($video['name']),
+                            "id" => md5($group["name"] . $video['name']),
                             "title" => $video['name'],
                             "preview_image" => current(explode('/', $_SERVER['SERVER_PROTOCOL'])) . "://" . $_SERVER['SERVER_ADDR'] . "/" . $video['thumbnail'],
                             "release_date" => explode('.', strval($video['epoch']))[0]
@@ -179,13 +179,25 @@ class VRP
 
     private function _sortVideos($data, $order, $direction)
     {
-        usort($data, function ($item1, $item2) use ($direction) {
-            if (strtolower($direction) === "desc") {
-                return $item2['release_date'] <=> $item1['release_date'];
-            } else {
-                return $item1['release_date'] <=> $item2['release_date'];
+        $d = [];
+        if ($order === "release_date") {
+            foreach ($data as $value) {
+                $d[$value['release_date']] = $value;
             }
-        });
+            ksort($d, SORT_NUMERIC);
+            } else {
+            foreach ($data as $value) {
+                $d[$value['title']] = $value;
+            }
+            ksort($d, SORT_STRING | SORT_FLAG_CASE);
+        }
+        $data = [];
+        foreach ($d as $value) {
+            $data[] = $value;
+        }
+        if (strtolower($direction) === "desc") {
+            $data = array_reverse($data);
+        }
         return $data;
     }
 
